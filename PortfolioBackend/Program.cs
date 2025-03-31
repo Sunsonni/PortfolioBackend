@@ -1,9 +1,12 @@
-using Supabase;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json.Serialization;
 using PortfolioBackend.DTOs;
 using PortfolioBackend.Models;
-using Supabase.Postgrest.Models;
+using PortfolioBackend.Service;
+using Supabase;
 using Supabase.Postgrest.Attributes;
+using Supabase.Postgrest.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,18 +15,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<BlogService>(_ => new BlogService(
-    new Client (
-        builder.Configuration["SUPABASE_URL"],
-        builder.Configuration["SUPABASE_KEY"]
-    )
+builder.Services.AddSingleton<Supabase.Client>(_ => new Client(
+    builder.Configuration["SUPABASE_KEY"],
+    builder.Configuration["SUPABASE_URL"],
+    new SupabaseOptions { AutoRefreshToken = true }
 ));
 
-builder.Services.Configure<JsonOptions>(options => 
+builder.Services.AddScoped<IBlogService, BlogService>();
+
+builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-})
+});
 
 var app = builder.Build();
 
