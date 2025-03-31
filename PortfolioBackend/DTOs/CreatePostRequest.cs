@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PortfolioBackend.DTOs;
 
-public class CreateBlogPostRequest
+public class CreatePostRequest
 {
     public string Title { get; set; } = string.Empty;
 

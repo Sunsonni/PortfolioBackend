@@ -6,28 +6,25 @@ using Supabase;
 using PortfolioBackend.Models;
 using PortfolioBackend.DTOs;
 
-namespace PortfolioBackend.Supabase
+namespace PortfolioBackend.Supabase;
+
+public class BlogService(Supabase.Client supabase)
 {
-
-    public class BlogService
+    public async Task<Post> CreatePost(CreatePostRequest request)
     {
-        private readonly Client _supabaseClient;
+        var post = new Post { Title = request.Title };
+        var response = await supabase.From<Post>().Insert(post);
 
-        public BlogService(Client supabaseClient)
+        if (response.Models.Count == 0)
         {
-            _supabaseClient = supabaseClient;
+            throw new Exception("Failed to create post");
         }
 
-        public async Task<Post> CreatePost(Post post)
-        {
-            var response = await _supabaseClient.From<Post>().Insert(post);
-
-            if (response.Models.Count == 0)
-            {
-                throw new Exception("Failed to create post");
-            }
-
-            return response.Models[0];
-        }
+        return response.Models[0];
     }
+
+    /*
+     var posts = await _blogservice.GetAllPosts()
+        return Okay(Posts);*/
+    public async Task<List<Post>> GetAllPosts()
 }

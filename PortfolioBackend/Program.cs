@@ -12,11 +12,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<Supabase.Client>(_ => new Supabase.Client(
-    builder.Configuration["SUPABASE_URL"]!,
-    builder.Configuration["SUPABASE_KEY"]!,
-    new SupabaseOptions { AutoRefreshToken = true, AutoConnectRealtime = true }
+builder.Services.AddScoped<BlogService>(_ => new BlogService(
+    new Client (
+        builder.Configuration["SUPABASE_URL"],
+        builder.Configuration["SUPABASE_KEY"]
+    )
 ));
+
+builder.Services.Configure<JsonOptions>(options => 
+{
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+})
 
 var app = builder.Build();
 
@@ -30,25 +37,35 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseHttpsRedirection();
 
-app.MapPost("/post", async (CreateBlogPostRequest request, Supabase.Client client) => 
-    {
-        var post = new Post
-        {
-            Title = request.Title
-        };
+// app.MapPost("/post", async (CreateBlogPostRequest request, Supabase.Client client) => 
+//     {
+//         //creating post
+//         var post = new Post
+//         {
+//             Title = request.Title
+//         };
 
-        var response = await client.From<Post>().Insert(post);
+//         //inputing into table
+//         var response = await client.From<Post>().Insert(post);
 
-        if (response.Models.Count == 0)
-        {
-            return Results.BadRequest("Failed to create post");
-        }
+//         var sections = request.Sections.Select(s => new Section {
+//             PostId = postResponse.Models[0].Id, // Use generated ID
+//             Title = s.Title,
+//             Content = s.Content
+//          }).ToList();
 
-        var createdPost = response.Models[0];
+//          await client.From<Section>().Insert(sections);
 
-        return Results.Created($"/post/{createdPost.Id}", createdPost);
-    }
-);
+//         if (response.Models.Count == 0)
+//         {
+//             return Results.BadRequest("Failed to create post");
+//         }
+
+//         var createdPost = response.Models[0];
+
+//         return Results.Created($"/post/{createdPost.Id}", createdPost);
+//     }
+// );
 
 app.UseHttpsRedirection();
 

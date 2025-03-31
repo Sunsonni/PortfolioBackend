@@ -7,6 +7,7 @@ using Supabase.Postgrest.Models;
 
 namespace PortfolioBackend.Models;
 
+[Table("sections")]
 public class Sections : BaseModel
 {
     [PrimaryKey("id", false)]
@@ -27,5 +28,3 @@ public class Sections : BaseModel
     [Reference(typeof(Post))]
     public Post Post { get; set; }
 }
-
- 
