@@ -1,6 +1,6 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Configuration;
-using System.Text.Json.Serialization;
 using PortfolioBackend.DTOs;
 using PortfolioBackend.Models;
 using PortfolioBackend.Service;
@@ -9,6 +9,8 @@ using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -40,6 +42,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 // app.MapPost("/post", async (CreateBlogPostRequest request, Supabase.Client client) => 
 //     {
