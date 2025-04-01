@@ -45,36 +45,6 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-// app.MapPost("/post", async (CreateBlogPostRequest request, Supabase.Client client) => 
-//     {
-//         //creating post
-//         var post = new Post
-//         {
-//             Title = request.Title
-//         };
-
-//         //inputing into table
-//         var response = await client.From<Post>().Insert(post);
-
-//         var sections = request.Sections.Select(s => new Section {
-//             PostId = postResponse.Models[0].Id, // Use generated ID
-//             Title = s.Title,
-//             Content = s.Content
-//          }).ToList();
-
-//          await client.From<Section>().Insert(sections);
-
-//         if (response.Models.Count == 0)
-//         {
-//             return Results.BadRequest("Failed to create post");
-//         }
-
-//         var createdPost = response.Models[0];
-
-//         return Results.Created($"/post/{createdPost.Id}", createdPost);
-//     }
-// );
-
 app.UseHttpsRedirection();
 
 app.Run();
